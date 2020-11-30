@@ -1,0 +1,25 @@
+version: 2.1
+orbs:
+  orb-tools: circleci/orb-tools@9
+  Jaycxflow: JayPNanduri/JayNCXFlow@dev:alpha
+
+workflows:
+  publish-dev:
+    jobs:
+      - orb-tools/lint
+      - orb-tools/pack:
+          source-dir: src
+          destination-orb-path: orb.yml
+          workspace-path: orb.yml
+          artifact-path: orb.yml
+          requires: [orb-tools/lint]
+      - orb-tools/publish-dev:
+          orb-name: JayPNanduri/JayNCXFlow
+          requires: [orb-tools/pack]
+      - orb-tools/publish:
+          orb-ref: JayPNanduri/JayNCXFlow@dev:alpha
+          attach-workspace: true
+          requires: [orb-tools/publish-dev]
+          filters:
+            branches:
+              only: master
